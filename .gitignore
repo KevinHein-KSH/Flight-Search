@@ -4,6 +4,7 @@ logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
 lerna-debug.log*
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
@@ -40,6 +41,7 @@ build/Release
 # Dependency directories
 node_modules/
 jspm_packages/
+dist-ssr
 
 # Snowpack dependency directory (https://snowpack.dev/)
 web_modules/
@@ -49,6 +51,7 @@ web_modules/
 
 # Optional npm cache directory
 .npm
+*.local
 
 # Optional eslint cache
 .eslintcache
@@ -123,7 +126,17 @@ dist
 .tern-port
 
 # Stores VSCode versions used for testing VSCode extensions
+.vscode
 .vscode-test
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 
 # yarn v3
 .pnp.*
