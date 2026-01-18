@@ -26,6 +26,7 @@ interface AmadeusTokenResponse {
   token_type: string
 }
 
+
 let cachedToken: { token: string; expiresAt: number } | null = null
 
 async function fetchAmadeusToken(): Promise<string> {

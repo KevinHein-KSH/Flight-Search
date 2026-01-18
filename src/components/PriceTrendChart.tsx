@@ -1,4 +1,4 @@
-import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
+import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import type { TooltipContentProps } from 'recharts'
 import type { PricePoint } from '../types'
 
@@ -29,30 +29,24 @@ export function PriceTrendChart({ data }: PriceTrendChartProps) {
         <div>
           <p className="text-xs uppercase tracking-[0.2em] text-white/60">Price graph</p>
         </div>
-        <span className="text-sm text-white/70">{data.length} days</span>
+        <span className="text-sm text-white/70">{data.length} data points</span>
       </div>
       <div className="min-h-[260px]" style={{ height: 260 }}>
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={data} margin={{ left: 0, right: 0, bottom: 0 }}>
-            <defs>
-              <linearGradient id="priceGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#6dd5ed" stopOpacity={0.9} />
-                <stop offset="100%" stopColor="#2193b0" stopOpacity={0.15} />
-              </linearGradient>
-            </defs>
+          <LineChart data={data} margin={{ left: 0, right: 0, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
             <XAxis dataKey="date" tickLine={false} axisLine={false} />
             <YAxis tickLine={false} axisLine={false} tickFormatter={(value) => `$${value}`} />
             <Tooltip<number, string> content={(props) => <CustomTooltip {...props} />} />
-            <Area
-              type="monotone"
+            <Line
+              type="linear"
               dataKey="averagePrice"
               stroke="#1a9cef"
               strokeWidth={3}
-              fill="url(#priceGradient)"
-              activeDot={{ r: 6 }}
+              dot={{ r: 5, strokeWidth: 2, stroke: '#1a9cef', fill: '#0f172a' }}
+              activeDot={{ r: 7 }}
             />
-          </AreaChart>
+          </LineChart>
         </ResponsiveContainer>
       </div>
     </div>

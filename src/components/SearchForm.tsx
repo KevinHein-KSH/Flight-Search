@@ -260,7 +260,7 @@ export function SearchForm({
           aria-label="Cabin"
         >
           <select
-            className="w-full rounded-xl border border-white/20 bg-white/10 px-3 py-2 text-white shadow-sm focus:border-cyan-200/60 focus:outline-none focus:ring-2 focus:ring-cyan-300"
+            className="w-full rounded-xl border border-white/25 bg-slate-900/70 px-3 py-2 text-white shadow-sm focus:border-cyan-200/60 focus:outline-none focus:ring-2 focus:ring-cyan-300"
             value={form.cabin}
             onChange={(e) => handleChange("cabin", e.target.value as CabinType)}
           >
