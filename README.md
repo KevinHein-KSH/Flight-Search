@@ -55,3 +55,6 @@ Set `VITE_ENABLE_LIVE_API=true` to query Amadeus; otherwise the UI stays on the 
 
 - The Amadeus search call uses the test environment and requests up to 20 flight offers. A small token cache avoids redundant auth calls.
 - When live API calls fail or credentials are absent, the UI automatically falls back to mock data to keep the experience smooth.
+
+
+- testing 
