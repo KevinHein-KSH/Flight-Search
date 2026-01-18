@@ -11,7 +11,7 @@ import type { FilterState, PricePoint, SearchParams } from './types'
 const defaultSearch: SearchParams = {
   origin: '',
   destination: '',
-  departureDate: new Date(Date.now() + 1000 * 60 * 60 * 24 * 14).toISOString().slice(0, 10),
+  departureDate: new Date().toISOString().slice(0, 10),
   returnDate: '',
   passengers: 1,
   passengerCounts: { adults: 1, children: 0, infants: 0 },
