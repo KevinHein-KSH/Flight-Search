@@ -5,12 +5,13 @@ import { FlightCard } from './components/FlightCard'
 import { PriceTrendChart } from './components/PriceTrendChart'
 import { SearchForm } from './components/SearchForm'
 import { useFlightSearch } from './hooks/useFlightSearch'
+import { RadarFlightLoader } from './utils/flightRouteLoader'
 import type { FilterState, PricePoint, SearchParams } from './types'
 
 const defaultSearch: SearchParams = {
   origin: '',
   destination: '',
-  departureDate: '',
+  departureDate: new Date(Date.now() + 1000 * 60 * 60 * 24 * 14).toISOString().slice(0, 10),
   returnDate: '',
   passengers: 1,
   passengerCounts: { adults: 1, children: 0, infants: 0 },
@@ -82,8 +83,12 @@ function App() {
   const pricePoints: PricePoint[] = useMemo(() => {
     if (!filteredFlights.length) return []
     const groups = filteredFlights.reduce<Record<string, number[]>>((acc, flight) => {
-      const key = flight.departureDate
-      acc[key] = acc[key] ? [...acc[key], flight.price] : [flight.price]
+      const add = (iso: string | undefined) => {
+        if (!iso) return
+        acc[iso] = acc[iso] ? [...acc[iso], flight.price] : [flight.price]
+      }
+      add(flight.departureDate)
+      add(flight.returnDate)
       return acc
     }, {})
 
@@ -137,16 +142,16 @@ function App() {
               <h3 className="m-0 text-xl font-semibold text-white">
                 {filteredFlights.length} {filteredFlights.length === 1 ? 'flight' : 'flights'} found
               </h3>
-              <p className="m-0 text-sm text-white/70">
-                Filters update both the list and the live graph. Pulls from mock data by default; wire Amadeus to go live.
-              </p>
             </div>
-            <span className="inline-flex items-center rounded-full border border-white/20 bg-white/5 px-3 py-1 text-xs font-semibold text-white/70">
-              {isFetching ? 'Refreshing…' : 'Fresh'}
-            </span>
           </div>
 
-          {filteredFlights.length === 0 ? (
+          {isFetching && (
+            <div className="mt-4 flex justify-center">
+              <RadarFlightLoader />
+            </div>
+          )}
+
+          {filteredFlights.length === 0 && !isFetching ? (
             <div className="rounded-xl border border-dashed border-white/20 bg-white/5 p-4 text-center text-white/70">
               No flights match your filters. Loosen the sliders to explore more options.
             </div>

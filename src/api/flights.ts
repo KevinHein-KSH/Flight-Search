@@ -1,5 +1,20 @@
 import type { Flight, SearchParams, CityLocation } from '../types'
 
+const regionDisplay = new Intl.DisplayNames(['en'], { type: 'region' })
+const COUNTRY_NAME_TO_CODE = (() => {
+  const map = new Map<string, string>()
+  for (let i = 65; i <= 90; i++) {
+    for (let j = 65; j <= 90; j++) {
+      const code = String.fromCharCode(i) + String.fromCharCode(j)
+      const name = regionDisplay.of(code)
+      if (name && name.toUpperCase() !== code) {
+        map.set(name.toLowerCase(), code)
+      }
+    }
+  }
+  return map
+})()
+
 const AMADEUS_BASE_URL = import.meta.env.VITE_AMADEUS_API_BASE ?? 'https://test.api.amadeus.com'
 const AMADEUS_KEY = import.meta.env.VITE_AMADEUS_API_KEY
 const AMADEUS_SECRET = import.meta.env.VITE_AMADEUS_API_SECRET
@@ -144,40 +159,57 @@ export async function searchCities(keyword: string): Promise<CityLocation[]> {
   if (!sanitized) return []
 
   const token = await fetchAmadeusToken()
-  const query = new URLSearchParams({
-    keyword: sanitized.toUpperCase(),
-    subType: 'CITY,AIRPORT',
-    'page[limit]': '8',
+  const baseParams = {
+    subType: 'AIRPORT',
+    'page[limit]': '12',
     'page[offset]': '0',
     view: 'FULL',
     sort: 'analytics.travelers.score',
-  })
-
-  const response = await fetch(`${AMADEUS_BASE_URL}/v1/reference-data/locations?${query.toString()}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
-    },
-  })
-
-  if (!response.ok) {
-    throw new Error(`Amadeus location search failed: ${response.statusText}`)
   }
 
-  const payload = await response.json()
-  console.info('[Amadeus] location response', {
-    status: response.status,
-    count: payload?.data?.length ?? 0,
-  })
+  const upper = sanitized.toUpperCase()
+  const countryCode = COUNTRY_NAME_TO_CODE.get(sanitized.toLowerCase())
 
-  return (payload?.data ?? []).map((item: any) => ({
-    id: item.id,
-    name: item.name ?? item.address?.cityName ?? 'Unknown',
-    iataCode: item.iataCode ?? '',
-    cityCode: item.address?.cityCode ?? item.iataCode ?? '',
-    country: item.address?.countryName ?? '',
-    subType: item.subType ?? 'CITY',
-  }))
+  const queries: URLSearchParams[] = [
+    new URLSearchParams({ ...baseParams, keyword: sanitized }),
+    ...(upper !== sanitized ? [new URLSearchParams({ ...baseParams, keyword: upper })] : []),
+    ...(countryCode ? [new URLSearchParams({ ...baseParams, countryCode })] : []),
+    ...(countryCode ? [new URLSearchParams({ ...baseParams, countryCode, keyword: countryCode })] : []),
+  ]
+
+  for (const query of queries) {
+    const response = await fetch(`${AMADEUS_BASE_URL}/v1/reference-data/locations?${query.toString()}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    })
+
+    if (!response.ok) {
+      console.warn('[Amadeus] location search failed', response.statusText)
+      continue
+    }
+
+    const payload = await response.json()
+    if (payload?.data?.length) {
+      console.info('[Amadeus] location response', {
+        status: response.status,
+        count: payload?.data?.length ?? 0,
+        countryCode,
+      })
+
+      return (payload?.data ?? []).map((item: any) => ({
+        id: item.id,
+        name: item.name ?? item.address?.cityName ?? 'Unknown',
+        iataCode: item.iataCode ?? '',
+        cityCode: item.address?.cityCode ?? item.iataCode ?? '',
+        country: item.address?.countryName ?? '',
+        subType: item.subType ?? 'CITY',
+      }))
+    }
+  }
+
+  return []
 }
 
 export async function searchFlights(params: SearchParams): Promise<Flight[]> {
