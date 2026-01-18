@@ -106,8 +106,8 @@ async function fetchAmadeusFlights(params: SearchParams): Promise<Flight[]> {
       return {
         id: offer.id ?? `live-${index}`,
         airline: carriers[offer.validatingAirlineCodes?.[0]] ?? segments[0]?.airline ?? 'Unknown',
-        originName: params.originLabel || params.origin,
-        destinationName: params.destinationLabel || params.destination,
+        // originName: params.originLabel || params.origin,
+        // destinationName: params.destinationLabel || params.destination,
         origin: firstSegment.departure?.iataCode ?? params.origin,
         destination: firstSegment.arrival?.iataCode ?? params.destination,
         departureDate: firstSegment.departure?.at?.slice(0, 10) ?? params.departureDate,

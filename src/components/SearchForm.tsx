@@ -176,7 +176,7 @@ export function SearchForm({ initialParams, onSubmit, isLoading }: SearchFormPro
             <span className="text-sm text-white/70">▾</span>
           </button>
           {showPassengers && (
-            <div className="absolute left-0 right-0 z-999 mt-2 rounded-xl border border-white/15 bg-slate-900/90 p-3 shadow-xl backdrop-blur">
+            <div className="absolute left-0 right-0 mt-2 rounded-xl border border-white/15 bg-slate-900/90 p-3 shadow-xl backdrop-blur">
               {(['adults', 'children', 'infants'] as const).map((key) => (
                 <div key={key} className="flex items-center justify-between py-1.5">
                   <div>
@@ -244,7 +244,7 @@ export function SearchForm({ initialParams, onSubmit, isLoading }: SearchFormPro
             className="rounded-xl border border-white/20 bg-white/10 px-3 py-2 text-white shadow-sm placeholder:text-white/50 focus:border-cyan-200/60 focus:outline-none focus:ring-2 focus:ring-cyan-300"
           />
           {CITY_SEARCH_ENABLED && originOpen && originQuery.length >= 3 && originCities.length > 0 && (
-            <div className="absolute left-0 z-999 mt-16 w-full max-w-xl rounded-xl border border-white/15 bg-slate-900/95 p-2 shadow-xl">
+            <div className="absolute left-0 mt-16 w-full max-w-xl rounded-xl border border-white/15 bg-slate-900/95 p-2 shadow-xl">
               {originCities.map((city) => (
                 <button
                   key={city.id}
@@ -296,7 +296,7 @@ export function SearchForm({ initialParams, onSubmit, isLoading }: SearchFormPro
             className="rounded-xl border border-white/20 bg-white/10 px-3 py-2 text-white shadow-sm placeholder:text-white/50 focus:border-cyan-200/60 focus:outline-none focus:ring-2 focus:ring-cyan-300"
           />
           {CITY_SEARCH_ENABLED && destinationOpen && destinationQuery.length >= 3 && destinationCities.length > 0 && (
-            <div className="absolute left-0 z-999 mt-16 w-full max-w-xl rounded-xl border border-white/15 bg-slate-900/95 p-2 shadow-xl">
+            <div className="absolute left-0 mt-16 w-full max-w-xl rounded-xl border border-white/15 bg-slate-900/95 p-2 shadow-xl">
               {destinationCities.map((city) => (
                 <button
                   key={city.id}
