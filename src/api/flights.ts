@@ -53,11 +53,6 @@ async function fetchAmadeusToken(): Promise<string> {
   }
 
   const payload: AmadeusTokenResponse = await response.json()
-  console.info('[Amadeus] token response', {
-    status: response.status,
-    expiresIn: payload.expires_in,
-    tokenPreview: payload.access_token?.slice(0, 6),
-  })
   cachedToken = {
     token: payload.access_token,
     expiresAt: Date.now() + payload.expires_in * 1000,
@@ -95,11 +90,6 @@ async function fetchAmadeusFlights(params: SearchParams): Promise<Flight[]> {
   }
 
   const payload = await response.json()
-  console.info('[Amadeus] search response', {
-    status: response.status,
-    offers: payload?.data?.length ?? 0,
-    warnings: payload?.warnings?.length ?? 0,
-  })
   const carriers = payload?.dictionaries?.carriers ?? {}
   const offers = payload?.data ?? []
   return offers
@@ -187,18 +177,12 @@ export async function searchCities(keyword: string): Promise<CityLocation[]> {
     })
 
     if (!response.ok) {
-      console.warn('[Amadeus] location search failed', response.statusText)
+      // skip failed location call
       continue
     }
 
     const payload = await response.json()
     if (payload?.data?.length) {
-      console.info('[Amadeus] location response', {
-        status: response.status,
-        count: payload?.data?.length ?? 0,
-        countryCode,
-      })
-
       return (payload?.data ?? []).map((item: any) => ({
         id: item.id,
         name: item.name ?? item.address?.cityName ?? 'Unknown',
@@ -214,12 +198,9 @@ export async function searchCities(keyword: string): Promise<CityLocation[]> {
 }
 
 export async function searchFlights(params: SearchParams): Promise<Flight[]> {
-  console.info('[Amadeus] searchFlights called', params)
   if (!ENABLE_LIVE || !AMADEUS_KEY || !AMADEUS_SECRET) {
     throw new Error('Live Amadeus API required. Set VITE_ENABLE_LIVE_API=true and provide credentials.')
   }
-  console.log("after");
-  
 
   return fetchAmadeusFlights(params)
 }
